@@ -12,21 +12,93 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 w-full max-w-sm text-center space-y-6">
-        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center mx-auto">
-          <span className="text-white font-bold text-xl">⚡</span>
+    <div
+      className="min-h-screen flex items-center justify-center relative overflow-hidden"
+      style={{ background: 'var(--mc-bg)' }}
+    >
+      {/* Atmospheric background glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(ellipse 60% 50% at 50% -10%, rgba(139,92,246,0.15) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 30% at 80% 80%, rgba(59,130,246,0.08) 0%, transparent 50%)
+          `,
+        }}
+      />
+
+      {/* Subtle grid overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-30"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px',
+        }}
+      />
+
+      {/* Login card */}
+      <div
+        className="relative w-full max-w-sm mx-4 rounded-2xl p-8 space-y-6 text-center"
+        style={{
+          background: 'var(--mc-card)',
+          border: '1px solid var(--mc-card-border)',
+          boxShadow: `
+            var(--mc-card-glow),
+            0 0 40px rgba(139,92,246,0.08),
+            0 0 80px rgba(59,130,246,0.05)
+          `,
+        }}
+      >
+        {/* Logo */}
+        <div className="flex justify-center">
+          <div
+            className="w-14 h-14 rounded-xl flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)',
+              boxShadow: '0 0 30px rgba(139,92,246,0.4), 0 0 60px rgba(59,130,246,0.2)',
+            }}
+          >
+            <span className="text-white font-bold text-2xl">⚡</span>
+          </div>
         </div>
+
+        {/* Title */}
         <div>
-          <h1 className="text-xl font-bold text-white">Mission Control</h1>
-          <p className="text-slate-400 text-sm mt-1">Influxe Agent Ecosystem</p>
+          <h1
+            className="text-xl font-bold tracking-tight"
+            style={{ color: 'var(--mc-text-primary)' }}
+          >
+            Mission Control
+          </h1>
+          <p
+            className="text-sm mt-1"
+            style={{ color: 'var(--mc-text-muted)' }}
+          >
+            Influxe Agent Ecosystem
+          </p>
         </div>
+
+        {/* Divider */}
+        <div
+          className="w-full h-px"
+          style={{ background: 'var(--mc-card-border)' }}
+        />
+
+        {/* Google sign in */}
         <button
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 text-sm font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-200 hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            background: '#ffffff',
+            color: '#1a1a1a',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+          }}
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -34,7 +106,13 @@ export default function LoginPage() {
           </svg>
           {loading ? 'Signing in…' : 'Sign in with Google'}
         </button>
-        <p className="text-slate-600 text-xs">Restricted to authorized accounts only</p>
+
+        <p
+          className="text-xs"
+          style={{ color: 'var(--mc-text-muted)' }}
+        >
+          Restricted to authorized accounts only
+        </p>
       </div>
     </div>
   )

@@ -1,6 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Activity, Bot, TrendingUp, Clock, Server } from 'lucide-react'
+import { Activity, Bot, TrendingUp, Clock, Server, Zap, CheckSquare, ListTodo } from 'lucide-react'
 import { getAgentColor } from '@/lib/agent-colors'
 
 // Server-side fetches must use localhost (container can't reach itself via public domain)
@@ -52,11 +51,15 @@ async function getBacklog() {
 }
 
 function StatusDot({ status }: { status: string }) {
-  const color = status === 'up' || status === 'healthy' || status === 'ok'
-    ? 'bg-green-400' 
-    : status === 'down' ? 'bg-red-400' 
-    : 'bg-yellow-400'
-  return <span className={`inline-block w-2 h-2 rounded-full ${color} mr-1.5 animate-pulse`} />
+  const isUp = status === 'up' || status === 'healthy' || status === 'ok'
+  const isDown = status === 'down'
+  const color = isUp ? '#34d399' : isDown ? '#f87171' : '#fbbf24'
+  return (
+    <span
+      className="inline-block w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0"
+      style={{ background: color, boxShadow: `0 0 6px ${color}` }}
+    />
+  )
 }
 
 function getNextCron(jobs: Array<{ nextRunAt?: string | null; name: string; enabled: boolean }>) {
@@ -66,13 +69,21 @@ function getNextCron(jobs: Array<{ nextRunAt?: string | null; name: string; enab
     .map(j => ({ ...j, nextMs: new Date(j.nextRunAt!).getTime() }))
     .filter(j => j.nextMs > now)
     .sort((a, b) => a.nextMs - b.nextMs)
-  
+
   if (!upcoming.length) return 'None scheduled'
   const next = upcoming[0]
   const diffMs = next.nextMs - now
   const diffH = Math.floor(diffMs / 3600000)
   const diffM = Math.floor((diffMs % 3600000) / 60000)
   return `${next.name} in ${diffH}h ${diffM}m`
+}
+
+// Agent accent colors for metric cards
+const metricAccents = {
+  total: { color: '#3b82f6', glow: 'rgba(59,130,246,0.15)' },
+  inProgress: { color: '#f59e0b', glow: 'rgba(245,158,11,0.15)' },
+  todo: { color: '#8b5cf6', glow: 'rgba(139,92,246,0.15)' },
+  crons: { color: '#10b981', glow: 'rgba(16,185,129,0.15)' },
 }
 
 export default async function DashboardPage() {
@@ -85,50 +96,100 @@ export default async function DashboardPage() {
   const activeAgents = 7
   const inProgressTasks = tasks.filter((t: { column: string }) => t.column === 'in-progress').length
   const todoTasks = tasks.filter((t: { column: string }) => t.column === 'todo').length
+  const crucixStatus = health?.services?.find((s: { name: string }) => s.name === 'Crucix')?.status || 'unknown'
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-slate-400 text-sm mt-1">Influxe Agent Ecosystem — Real-time overview</p>
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+
+      {/* Page heading */}
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--mc-text-primary)' }}>
+            Dashboard
+          </h1>
+          <p className="text-sm mt-0.5" style={{ color: 'var(--mc-text-muted)' }}>
+            Influxe Agent Ecosystem — Real-time overview
+          </p>
+        </div>
+        <div
+          className="text-xs px-3 py-1.5 rounded-full font-mono hidden md:block"
+          style={{
+            background: 'var(--mc-card)',
+            border: '1px solid var(--mc-card-border)',
+            color: 'var(--mc-text-muted)',
+          }}
+        >
+          {new Date().toUTCString().replace(' GMT', ' UTC')}
+        </div>
       </div>
 
-      {/* Status Bar */}
+      {/* Status Bar — slim pills */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 flex items-center gap-2">
-          <Server className="w-4 h-4 text-slate-400 flex-shrink-0" />
+
+        {/* Crucix */}
+        <div
+          className="mc-card flex items-center gap-3 p-3"
+        >
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(99,179,237,0.1)', border: '1px solid rgba(99,179,237,0.2)' }}
+          >
+            <Server className="w-4 h-4" style={{ color: 'var(--mc-accent-blue)' }} />
+          </div>
           <div className="min-w-0">
-            <div className="text-xs text-slate-500">Crucix</div>
-            <div className="flex items-center text-sm font-medium truncate">
-              <StatusDot status={health?.services?.find((s: { name: string }) => s.name === 'Crucix')?.status || 'unknown'} />
-              <span className="capitalize">{health?.services?.find((s: { name: string }) => s.name === 'Crucix')?.status || 'unknown'}</span>
+            <div className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>Crucix</div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <StatusDot status={crucixStatus} />
+              <span className="text-sm font-semibold capitalize" style={{ color: 'var(--mc-text-primary)' }}>
+                {crucixStatus}
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 flex items-center gap-2">
-          <Bot className="w-4 h-4 text-purple-400 flex-shrink-0" />
+        {/* Agents */}
+        <div className="mc-card flex items-center gap-3 p-3">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}
+          >
+            <Bot className="w-4 h-4" style={{ color: 'var(--mc-brand)' }} />
+          </div>
           <div className="min-w-0">
-            <div className="text-xs text-slate-500">Agents</div>
-            <div className="text-sm font-medium">{activeAgents} active</div>
+            <div className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>Agents</div>
+            <div className="text-sm font-semibold mt-0.5" style={{ color: 'var(--mc-text-primary)' }}>
+              {activeAgents} active
+            </div>
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+        {/* XAU/USD */}
+        <div className="mc-card flex items-center gap-3 p-3">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)' }}
+          >
+            <TrendingUp className="w-4 h-4 text-yellow-400" />
+          </div>
           <div className="min-w-0">
-            <div className="text-xs text-slate-500">XAU/USD</div>
-            <div className="text-sm font-medium text-yellow-300">
+            <div className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>XAU/USD</div>
+            <div className="text-sm font-semibold mt-0.5 text-yellow-400">
               {gold?.price ? `$${Number(gold.price).toFixed(2)}` : '—'}
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-slate-400 flex-shrink-0" />
+        {/* Next Cron */}
+        <div className="mc-card flex items-center gap-3 p-3">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.2)' }}
+          >
+            <Clock className="w-4 h-4" style={{ color: 'var(--mc-accent-cyan)' }} />
+          </div>
           <div className="min-w-0">
-            <div className="text-xs text-slate-500">Next cron</div>
-            <div className="text-sm font-medium text-slate-300 truncate">
+            <div className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>Next Cron</div>
+            <div className="text-sm font-semibold mt-0.5 truncate" style={{ color: 'var(--mc-text-primary)' }}>
               {getNextCron(cronJobs)}
             </div>
           </div>
@@ -137,59 +198,111 @@ export default async function DashboardPage() {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Tasks</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-white">{tasks.length}</div>
-            <p className="text-xs text-slate-500 mt-1">in backlog</p>
-          </CardContent>
-        </Card>
 
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-slate-400 uppercase tracking-wider">In Progress</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-yellow-400">{inProgressTasks}</div>
-            <p className="text-xs text-slate-500 mt-1">active tasks</p>
-          </CardContent>
-        </Card>
+        <div
+          className="mc-card p-5"
+          style={{ boxShadow: `var(--mc-card-glow), inset 0 1px 0 ${metricAccents.total.glow}` }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
+              Total Tasks
+            </span>
+            <div
+              className="w-7 h-7 rounded-md flex items-center justify-center"
+              style={{ background: metricAccents.total.glow, border: `1px solid ${metricAccents.total.color}30` }}
+            >
+              <ListTodo className="w-3.5 h-3.5" style={{ color: metricAccents.total.color }} />
+            </div>
+          </div>
+          <div className="text-3xl font-bold tracking-tight" style={{ color: 'var(--mc-text-primary)' }}>
+            {tasks.length}
+          </div>
+          <p className="text-xs mt-1" style={{ color: 'var(--mc-text-muted)' }}>in backlog</p>
+        </div>
 
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-slate-400 uppercase tracking-wider">To Do</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-blue-400">{todoTasks}</div>
-            <p className="text-xs text-slate-500 mt-1">queued tasks</p>
-          </CardContent>
-        </Card>
+        <div
+          className="mc-card p-5"
+          style={{ boxShadow: `var(--mc-card-glow), inset 0 1px 0 ${metricAccents.inProgress.glow}` }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
+              In Progress
+            </span>
+            <div
+              className="w-7 h-7 rounded-md flex items-center justify-center"
+              style={{ background: metricAccents.inProgress.glow, border: `1px solid ${metricAccents.inProgress.color}30` }}
+            >
+              <Zap className="w-3.5 h-3.5 text-yellow-400" />
+            </div>
+          </div>
+          <div className="text-3xl font-bold tracking-tight text-yellow-400">
+            {inProgressTasks}
+          </div>
+          <p className="text-xs mt-1" style={{ color: 'var(--mc-text-muted)' }}>active tasks</p>
+        </div>
 
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-slate-400 uppercase tracking-wider">Cron Jobs</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-green-400">{cronJobs.filter((j: { enabled: boolean }) => j.enabled).length}</div>
-            <p className="text-xs text-slate-500 mt-1">active automations</p>
-          </CardContent>
-        </Card>
+        <div
+          className="mc-card p-5"
+          style={{ boxShadow: `var(--mc-card-glow), inset 0 1px 0 ${metricAccents.todo.glow}` }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
+              To Do
+            </span>
+            <div
+              className="w-7 h-7 rounded-md flex items-center justify-center"
+              style={{ background: metricAccents.todo.glow, border: `1px solid ${metricAccents.todo.color}30` }}
+            >
+              <CheckSquare className="w-3.5 h-3.5" style={{ color: metricAccents.todo.color }} />
+            </div>
+          </div>
+          <div className="text-3xl font-bold tracking-tight" style={{ color: metricAccents.todo.color }}>
+            {todoTasks}
+          </div>
+          <p className="text-xs mt-1" style={{ color: 'var(--mc-text-muted)' }}>queued tasks</p>
+        </div>
+
+        <div
+          className="mc-card p-5"
+          style={{ boxShadow: `var(--mc-card-glow), inset 0 1px 0 ${metricAccents.crons.glow}` }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
+              Cron Jobs
+            </span>
+            <div
+              className="w-7 h-7 rounded-md flex items-center justify-center"
+              style={{ background: metricAccents.crons.glow, border: `1px solid ${metricAccents.crons.color}30` }}
+            >
+              <Clock className="w-3.5 h-3.5" style={{ color: metricAccents.crons.color }} />
+            </div>
+          </div>
+          <div className="text-3xl font-bold tracking-tight text-emerald-400">
+            {cronJobs.filter((j: { enabled: boolean }) => j.enabled).length}
+          </div>
+          <p className="text-xs mt-1" style={{ color: 'var(--mc-text-muted)' }}>active automations</p>
+        </div>
       </div>
 
-      {/* Activity Feed */}
+      {/* Activity + Crons */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-              <Activity className="w-4 h-4 text-purple-400" />
+
+        {/* Activity Feed */}
+        <div className="mc-card p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <div
+              className="w-7 h-7 rounded-md flex items-center justify-center"
+              style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.25)' }}
+            >
+              <Activity className="w-3.5 h-3.5" style={{ color: 'var(--mc-brand)' }} />
+            </div>
+            <span className="text-sm font-semibold" style={{ color: 'var(--mc-text-primary)' }}>
               Activity Feed
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
+            </span>
+          </div>
+          <div className="space-y-2.5">
             {(activity?.entries || []).length === 0 ? (
-              <p className="text-slate-500 text-sm">No recent activity</p>
+              <p className="text-sm" style={{ color: 'var(--mc-text-muted)' }}>No recent activity</p>
             ) : (
               (activity?.entries || []).slice(0, 10).map((entry: { agent: string; content: string; file: string }, i: number) => {
                 const colors = getAgentColor(entry.agent)
@@ -198,48 +311,66 @@ export default async function DashboardPage() {
                     <Badge className={`${colors.badge} text-xs flex-shrink-0 mt-0.5 capitalize`}>
                       {entry.agent}
                     </Badge>
-                    <span className="text-slate-400 truncate">{entry.content}</span>
+                    <span className="truncate" style={{ color: 'var(--mc-text-muted)' }}>
+                      {entry.content}
+                    </span>
                   </div>
                 )
               })
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-blue-400" />
+        {/* Cron Runs */}
+        <div className="mc-card p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <div
+              className="w-7 h-7 rounded-md flex items-center justify-center"
+              style={{ background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.25)' }}
+            >
+              <Clock className="w-3.5 h-3.5" style={{ color: 'var(--mc-accent-blue)' }} />
+            </div>
+            <span className="text-sm font-semibold" style={{ color: 'var(--mc-text-primary)' }}>
               Recent Cron Runs
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
+            </span>
+          </div>
+          <div className="space-y-2.5">
             {cronJobs.length === 0 ? (
-              <p className="text-slate-500 text-sm">No cron data</p>
+              <p className="text-sm" style={{ color: 'var(--mc-text-muted)' }}>No cron data</p>
             ) : (
               cronJobs
                 .filter((j: { lastRunAt?: string | null }) => j.lastRunAt)
-                .sort((a: { lastRunAt?: string | null }, b: { lastRunAt?: string | null }) => 
+                .sort((a: { lastRunAt?: string | null }, b: { lastRunAt?: string | null }) =>
                   new Date(b.lastRunAt!).getTime() - new Date(a.lastRunAt!).getTime()
                 )
                 .slice(0, 6)
                 .map((job: { name: string; agentId: string; lastStatus?: string | null; lastRunAt?: string | null }, i: number) => {
                   const colors = getAgentColor(job.agentId)
+                  const isOk = job.lastStatus === 'ok'
                   return (
                     <div key={i} className="flex items-center gap-2 text-sm">
                       <Badge className={`${colors.badge} text-xs flex-shrink-0 capitalize`}>
                         {job.agentId}
                       </Badge>
-                      <span className="text-slate-300 flex-1 truncate">{job.name}</span>
-                      <Badge variant="outline" className={`text-xs ${job.lastStatus === 'ok' ? 'border-green-700 text-green-400' : 'border-red-700 text-red-400'}`}>
+                      <span className="flex-1 truncate" style={{ color: 'var(--mc-text-primary)' }}>
+                        {job.name}
+                      </span>
+                      <span
+                        className="text-xs px-2 py-0.5 rounded-full font-medium"
+                        style={{
+                          background: isOk ? 'rgba(16,185,129,0.1)' : 'rgba(248,113,113,0.1)',
+                          border: `1px solid ${isOk ? 'rgba(16,185,129,0.25)' : 'rgba(248,113,113,0.25)'}`,
+                          color: isOk ? '#34d399' : '#f87171',
+                        }}
+                      >
                         {job.lastStatus || 'unknown'}
-                      </Badge>
+                      </span>
                     </div>
                   )
                 })
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   )
