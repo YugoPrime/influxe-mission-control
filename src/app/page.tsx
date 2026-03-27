@@ -3,9 +3,11 @@ import { Badge } from '@/components/ui/badge'
 import { Activity, Bot, TrendingUp, Clock, Server } from 'lucide-react'
 import { getAgentColor } from '@/lib/agent-colors'
 
+const BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3001'
+
 async function getHealth() {
   try {
-    const res = await fetch('http://localhost:3000/api/health', { cache: 'no-store' })
+    const res = await fetch(`${BASE_URL}/api/health`, { cache: 'no-store' })
     return res.ok ? res.json() : { overall: 'unknown', services: [] }
   } catch {
     return { overall: 'unknown', services: [] }
@@ -14,7 +16,7 @@ async function getHealth() {
 
 async function getGold() {
   try {
-    const res = await fetch('http://localhost:3000/api/gold', { next: { revalidate: 60 } })
+    const res = await fetch(`${BASE_URL}/api/gold`, { next: { revalidate: 60 } })
     return res.ok ? res.json() : { price: null }
   } catch {
     return { price: null }
@@ -23,7 +25,7 @@ async function getGold() {
 
 async function getCrons() {
   try {
-    const res = await fetch('http://localhost:3000/api/crons', { cache: 'no-store' })
+    const res = await fetch(`${BASE_URL}/api/crons`, { cache: 'no-store' })
     return res.ok ? res.json() : { jobs: [] }
   } catch {
     return { jobs: [] }
@@ -32,7 +34,7 @@ async function getCrons() {
 
 async function getActivity() {
   try {
-    const res = await fetch('http://localhost:3000/api/activity', { cache: 'no-store' })
+    const res = await fetch(`${BASE_URL}/api/activity`, { cache: 'no-store' })
     return res.ok ? res.json() : { entries: [] }
   } catch {
     return { entries: [] }
@@ -41,7 +43,7 @@ async function getActivity() {
 
 async function getBacklog() {
   try {
-    const res = await fetch('http://localhost:3000/api/backlog', { cache: 'no-store' })
+    const res = await fetch(`${BASE_URL}/api/backlog`, { cache: 'no-store' })
     return res.ok ? res.json() : { tasks: [] }
   } catch {
     return { tasks: [] }
