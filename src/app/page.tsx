@@ -3,7 +3,8 @@ import { Badge } from '@/components/ui/badge'
 import { Activity, Bot, TrendingUp, Clock, Server } from 'lucide-react'
 import { getAgentColor } from '@/lib/agent-colors'
 
-const BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3001'
+// Server-side fetches must use localhost (container can't reach itself via public domain)
+const BASE_URL = process.env.INTERNAL_URL || 'http://localhost:3000'
 
 async function getHealth() {
   try {
