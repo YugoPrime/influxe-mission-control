@@ -6,7 +6,7 @@ import { AppSidebar } from '@/components/app-sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { Bolt } from 'lucide-react'
+import { Bell } from 'lucide-react'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -56,34 +56,35 @@ export default function RootLayout({
                     className="w-px h-5"
                     style={{ background: 'var(--mc-card-border)' }}
                   />
-                  {/* Brand mark */}
+                  {/* Breadcrumb */}
                   <div className="flex items-center gap-2 flex-1">
-                    <div className="w-5 h-5 rounded bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center flex-shrink-0">
-                      <Bolt className="w-3 h-3 text-white" />
-                    </div>
                     <span
                       className="text-sm font-medium tracking-tight hidden sm:block"
                       style={{ color: 'var(--mc-text-muted)' }}
                     >
-                      Mission Control
+                      Dashboard
                     </span>
                   </div>
 
                   {/* Right side */}
-                  <div className="flex items-center gap-2">
-                    {/* Status indicator */}
+                  <div className="flex items-center gap-2.5">
+                    <Bell
+                      className="w-4 h-4 opacity-50"
+                      style={{ color: 'var(--mc-text-muted)' }}
+                    />
+                    <ThemeToggle />
+                    {/* Avatar */}
                     <div
-                      className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                      className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
                       style={{
-                        background: 'rgba(16,185,129,0.1)',
-                        border: '1px solid rgba(16,185,129,0.25)',
-                        color: '#34d399',
+                        background: 'rgba(99,102,241,0.8)',
+                        color: '#fff',
+                        fontSize: '0.875rem',
+                        fontWeight: 700,
                       }}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                      Online
+                      R
                     </div>
-                    <ThemeToggle />
                   </div>
                 </header>
 
