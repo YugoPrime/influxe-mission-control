@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Bolt,
   Search,
+  TrendingUp,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -31,6 +32,7 @@ const navItems = [
   { href: '/projects', label: 'Projects', icon: Kanban },
   { href: '/automations', label: 'Automations', icon: Zap },
   { href: '/team', label: 'Team', icon: Users },
+  { href: '/ruel', label: 'Ruel Panel', icon: TrendingUp },
 ]
 
 // Agent roster with colors
