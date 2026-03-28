@@ -164,33 +164,7 @@ export default function TeamPage() {
         </div>
       </div>
 
-      {/* Agent cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-        {agents.filter(a => a.id !== 'rahvi').map(agent => {
-          const colors = getAgentColor(agent.id)
-          return (
-            <Card key={agent.id} className={`bg-slate-900 border ${colors.border}`}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-lg ${colors.bg} border ${colors.border} flex items-center justify-center flex-shrink-0`}>
-                    <Bot className={`w-5 h-5 ${colors.text}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className={`font-semibold ${colors.text}`}>{agent.name}</div>
-                    {agent.role && <div className="text-xs text-slate-500 mt-0.5">{agent.role}</div>}
-                    <div className="flex items-center gap-2 mt-2">
-                      <ModelBadge model={agent.model} />
-                      <Badge variant="outline" className="text-xs border-green-800 text-green-400">
-                        active
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+
     </div>
   )
 }
