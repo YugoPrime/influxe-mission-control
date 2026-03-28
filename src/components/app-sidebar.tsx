@@ -18,6 +18,8 @@ import {
   Briefcase,
   Megaphone,
   Brain,
+  Server,
+  DollarSign,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -45,11 +47,14 @@ const navItems = [
   { href: '/nexus', label: 'Nexus', icon: Briefcase },
   { href: '/nova', label: 'Nova', icon: Megaphone },
   { href: '/mastermind', label: 'Mastermind', icon: Brain },
+  { href: '/jarvis', label: 'Jarvis', icon: Server },
 ]
 
 const systemItems = [
   { href: '/system-health', label: 'System Health', icon: Activity },
-  { href: '#', label: 'Settings', icon: Settings },
+  { href: '/agents-live', label: 'Agents Live', icon: Activity },
+  { href: '/costs', label: 'Costs', icon: DollarSign },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
 // Agent roster with colors
