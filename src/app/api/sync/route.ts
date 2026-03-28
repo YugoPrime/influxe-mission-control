@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { readFileSync, readdirSync, statSync } from 'fs'
 import { join } from 'path'
 import { prisma } from '@/lib/prisma'
+import { getEmbeddingsBatch } from '@/lib/embeddings'
+
+const BATCH_SIZE = 20
 
 const BACKLOG_PATH = '/root/.openclaw/workspace/agents/shared/BACKLOG.md'
 const INBOX_PATH = '/root/.openclaw/workspace/agents/shared/INBOX.md'
@@ -132,6 +135,8 @@ async function syncResearch() {
 
 async function syncActivity() {
   let count = 0
+  const pendingEntries: Array<{ agentId: string; action: string; content: string; metadata: { file: string } }> = []
+
   try {
     const agents = readdirSync(AGENTS_DIR).filter(a => !['shared', 'repo'].includes(a))
     for (const agent of agents) {
@@ -146,16 +151,45 @@ async function syncActivity() {
             const content = readSafe(filePath)
             const lines = content.split('\n').filter(l => l.trim().length > 10).slice(-5)
             for (const line of lines) {
-              await prisma.agentActivity.create({
-                data: { agentId: agent, action: 'log', content: line.trim(), metadata: { file } },
-              })
-              count++
+              pendingEntries.push({ agentId: agent, action: 'log', content: line.trim(), metadata: { file } })
             }
           } catch { /* skip */ }
         }
       } catch { /* no memory dir */ }
     }
   } catch { /* agents dir not found */ }
+
+  const hasOpenAI = !!process.env.OPENAI_API_KEY
+
+  for (let i = 0; i < pendingEntries.length; i += BATCH_SIZE) {
+    const batch = pendingEntries.slice(i, i + BATCH_SIZE)
+    let embeddings: number[][] | null = null
+
+    if (hasOpenAI) {
+      try {
+        embeddings = await getEmbeddingsBatch(batch.map(e => e.content))
+      } catch { /* skip embeddings on failure */ }
+    }
+
+    for (let j = 0; j < batch.length; j++) {
+      const entry = batch[j]
+      const embedding = embeddings?.[j]
+      const vectorStr = embedding ? `[${embedding.join(',')}]` : null
+
+      if (vectorStr) {
+        await prisma.$executeRaw`
+          INSERT INTO "AgentActivity" (id, "agentId", action, content, metadata, "createdAt", embedding)
+          VALUES (gen_random_uuid()::text, ${entry.agentId}, ${entry.action}, ${entry.content}, ${JSON.stringify(entry.metadata)}::jsonb, NOW(), ${vectorStr}::vector)
+        `
+      } else {
+        await prisma.agentActivity.create({
+          data: { agentId: entry.agentId, action: entry.action, content: entry.content, metadata: entry.metadata },
+        })
+      }
+      count++
+    }
+  }
+
   return count
 }
 
