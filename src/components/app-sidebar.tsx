@@ -13,6 +13,8 @@ import {
   TrendingUp,
   Heart,
   Settings,
+  Activity,
+  Lightbulb,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -35,10 +37,12 @@ const navItems = [
   { href: '/automations', label: 'Automations', icon: Zap },
   { href: '/team', label: 'Team', icon: Users },
   { href: '/ruel', label: 'Ruel Panel', icon: TrendingUp },
+  { href: '/amalia', label: 'Amalia', icon: Heart },
+  { href: '/ideas', label: 'Ideas Pipeline', icon: Lightbulb },
 ]
 
 const systemItems = [
-  { href: '#', label: 'Support', icon: Heart },
+  { href: '/system-health', label: 'System Health', icon: Activity },
   { href: '#', label: 'Settings', icon: Settings },
 ]
 

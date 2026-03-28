@@ -19,16 +19,19 @@ async function checkService(name: string, url: string): Promise<ServiceStatus> {
 }
 
 export async function GET() {
-  const [crucix, openclaw] = await Promise.all([
+  const [crucix, openclaw, langfuse, coolify] = await Promise.all([
     checkService('Crucix', 'http://localhost:3117/api/health'),
     checkService('OpenClaw', 'http://localhost:18789'),
+    checkService('Langfuse', 'http://localhost:3100/api/public/health'),
+    checkService('Coolify', 'http://localhost:8000/api/health'),
   ])
 
-  const overall = [crucix, openclaw].every(s => s.status === 'up') ? 'healthy' : 'degraded'
+  const services = [openclaw, crucix, langfuse, coolify]
+  const overall = services.every(s => s.status === 'up') ? 'healthy' : 'degraded'
 
   return NextResponse.json({
     overall,
-    services: [crucix, openclaw],
+    services,
     checkedAt: new Date().toISOString(),
   })
 }
