@@ -1,6 +1,29 @@
 import { Badge } from '@/components/ui/badge'
-import { Activity, Bot, TrendingUp, Clock, Server, Zap, CheckSquare, ListTodo } from 'lucide-react'
+import { Activity, Bot, TrendingUp, Clock, Server, Zap, CheckSquare, ListTodo, AlertCircle } from 'lucide-react'
 import { getAgentColor } from '@/lib/agent-colors'
+
+function formatRelativeTime(timestamp?: string): string {
+  if (!timestamp) return ''
+  const diff = Date.now() - new Date(timestamp).getTime()
+  const h = Math.floor(diff / 3600000)
+  const m = Math.floor((diff % 3600000) / 60000)
+  if (h > 23) return `${Math.floor(h / 24)}d ago`
+  if (h > 0) return `${h}h ago`
+  if (m > 0) return `${m}m ago`
+  return 'just now'
+}
+
+const AGENT_DOT_COLORS: Record<string, string> = {
+  'yugo-prime': '#a855f7',
+  'jarvis': '#3b82f6',
+  'ruel': '#f59e0b',
+  'nova': '#ec4899',
+  'nexus': '#22c55e',
+  'amalia': '#14b8a6',
+  'mastermind': '#f97316',
+  'rahvi': '#94a3b8',
+  'baril': '#06b6d4',
+}
 
 // Server-side fetches must use localhost (container can't reach itself via public domain)
 const BASE_URL = process.env.INTERNAL_URL || 'http://localhost:3000'
@@ -35,9 +58,22 @@ async function getCrons() {
 async function getActivity() {
   try {
     const res = await fetch(`${BASE_URL}/api/activity`, { cache: 'no-store' })
-    return res.ok ? res.json() : { entries: [] }
+    if (!res.ok) return { entries: [] }
+    const data = await res.json()
+    return { entries: Array.isArray(data?.entries) ? data.entries : [] }
   } catch {
     return { entries: [] }
+  }
+}
+
+async function getAgents() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/agents`, { cache: 'no-store' })
+    if (!res.ok) return { agents: [] }
+    const data = await res.json()
+    return { agents: Array.isArray(data?.agents) ? data.agents : [] }
+  } catch {
+    return { agents: [] }
   }
 }
 
@@ -83,19 +119,23 @@ const metricAccents = {
   total: { color: '#3b82f6', glow: 'rgba(59,130,246,0.15)' },
   inProgress: { color: '#f59e0b', glow: 'rgba(245,158,11,0.15)' },
   todo: { color: '#8b5cf6', glow: 'rgba(139,92,246,0.15)' },
+  blocked: { color: '#f87171', glow: 'rgba(248,113,113,0.15)' },
   crons: { color: '#10b981', glow: 'rgba(16,185,129,0.15)' },
 }
 
 export default async function DashboardPage() {
-  const [health, gold, crons, activity, backlog] = await Promise.all([
-    getHealth(), getGold(), getCrons(), getActivity(), getBacklog()
+  const [health, gold, crons, activity, backlog, agentData] = await Promise.all([
+    getHealth(), getGold(), getCrons(), getActivity(), getBacklog(), getAgents()
   ])
 
   const cronJobs = crons.jobs || []
   const tasks = backlog.tasks || []
-  const activeAgents = 7
+  const agents: Array<{ id: string; name: string; model: string; status: string; role: string }> = agentData?.agents || []
+  const activeAgents = agents.length || 7
   const inProgressTasks = tasks.filter((t: { column: string }) => t.column === 'in-progress').length
   const todoTasks = tasks.filter((t: { column: string }) => t.column === 'todo').length
+  const blockedTasks = tasks.filter((t: { column: string }) => t.column === 'blocked').length
+  const activityEntries: Array<{ agent: string; content: string; file: string; timestamp?: string }> = activity?.entries || []
   const crucixStatus = health?.services?.find((s: { name: string }) => s.name === 'Crucix')?.status || 'unknown'
 
   return (
@@ -264,25 +304,60 @@ export default async function DashboardPage() {
 
         <div
           className="mc-card p-5"
-          style={{ boxShadow: `var(--mc-card-glow), inset 0 1px 0 ${metricAccents.crons.glow}` }}
+          style={{ boxShadow: `var(--mc-card-glow), inset 0 1px 0 ${metricAccents.blocked.glow}` }}
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
-              Cron Jobs
+              Blocked
             </span>
             <div
               className="w-7 h-7 rounded-md flex items-center justify-center"
-              style={{ background: metricAccents.crons.glow, border: `1px solid ${metricAccents.crons.color}30` }}
+              style={{ background: metricAccents.blocked.glow, border: `1px solid ${metricAccents.blocked.color}30` }}
             >
-              <Clock className="w-3.5 h-3.5" style={{ color: metricAccents.crons.color }} />
+              <AlertCircle className="w-3.5 h-3.5" style={{ color: metricAccents.blocked.color }} />
             </div>
           </div>
-          <div className="text-3xl font-bold tracking-tight text-emerald-400">
-            {cronJobs.filter((j: { enabled: boolean }) => j.enabled).length}
+          <div className="text-3xl font-bold tracking-tight" style={{ color: metricAccents.blocked.color }}>
+            {blockedTasks}
           </div>
-          <p className="text-xs mt-1" style={{ color: 'var(--mc-text-muted)' }}>active automations</p>
+          <p className="text-xs mt-1" style={{ color: 'var(--mc-text-muted)' }}>need attention</p>
         </div>
       </div>
+
+      {/* Agent Roster */}
+      {agents.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
+            Agents
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {agents.map((agent) => {
+              const dotColor = AGENT_DOT_COLORS[agent.id] || '#6b7280'
+              return (
+                <div
+                  key={agent.id}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm"
+                  style={{
+                    background: 'var(--mc-card)',
+                    border: '1px solid var(--mc-card-border)',
+                  }}
+                >
+                  <span
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: dotColor, boxShadow: `0 0 6px ${dotColor}` }}
+                  />
+                  <span className="font-medium" style={{ color: 'var(--mc-text-primary)' }}>
+                    {agent.name}
+                  </span>
+                  <span className="hidden sm:inline text-xs truncate max-w-[120px]" style={{ color: 'var(--mc-text-muted)' }}>
+                    {agent.role}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Activity + Crons */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -301,19 +376,25 @@ export default async function DashboardPage() {
             </span>
           </div>
           <div className="space-y-2.5">
-            {(activity?.entries || []).length === 0 ? (
+            {activityEntries.length === 0 ? (
               <p className="text-sm" style={{ color: 'var(--mc-text-muted)' }}>No recent activity</p>
             ) : (
-              (activity?.entries || []).slice(0, 10).map((entry: { agent: string; content: string; file: string }, i: number) => {
+              activityEntries.slice(0, 10).map((entry, i) => {
                 const colors = getAgentColor(entry.agent)
+                const rel = formatRelativeTime(entry.timestamp)
                 return (
                   <div key={i} className="flex items-start gap-2 text-sm">
                     <Badge className={`${colors.badge} text-xs flex-shrink-0 mt-0.5 capitalize`}>
                       {entry.agent}
                     </Badge>
-                    <span className="truncate" style={{ color: 'var(--mc-text-muted)' }}>
-                      {entry.content}
+                    <span className="flex-1 truncate" style={{ color: 'var(--mc-text-muted)' }}>
+                      {entry.content.slice(0, 70)}
                     </span>
+                    {rel && (
+                      <span className="text-xs flex-shrink-0" style={{ color: 'var(--mc-text-muted)', opacity: 0.6 }}>
+                        {rel}
+                      </span>
+                    )}
                   </div>
                 )
               })
