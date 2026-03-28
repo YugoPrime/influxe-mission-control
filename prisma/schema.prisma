@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  owner       String?
+  deadline    String?
+  priority    String   @default("normal")
+  status      String   @default("not_started")
+  category    String?
+  tags        String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Handoff {
+  id        String    @id @default(cuid())
+  handoffId String    @unique
+  fromAgent String
+  toAgent   String
+  type      String
+  summary   String
+  payload   String?
+  status    String    @default("PENDING")
+  sentAt    DateTime
+  ackedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Trade {
+  id              String   @id @default(cuid())
+  date            DateTime
+  direction       String
+  pair            String   @default("XAUUSD")
+  entry           String?
+  sl              String?
+  tp              String?
+  result          String?
+  pnl             String?
+  notes           String?
+  smcPattern      String?
+  confluenceScore Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ResearchIdea {
+  id               String   @id @default(cuid())
+  title            String
+  score            Float?
+  status           String   @default("incubating")
+  snippet          String?
+  sourceFile       String?
+  marketDemand     Int?
+  executability    Int?
+  revenuePotential Int?
+  timeToValue      Int?
+  competitiveMoat  Int?
+  decision         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model AgentActivity {
+  id        String   @id @default(cuid())
+  agentId   String
+  action    String
+  content   String
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
+model ContentCalendar {
+  id          String   @id @default(cuid())
+  platform    String
+  accountName String?
+  scheduledAt DateTime
+  status      String   @default("draft")
+  caption     String?
+  mediaUrl    String?
+  postType    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CronRun {
+  id        String   @id @default(cuid())
+  jobId     String
+  jobName   String
+  agentId   String
+  status    String
+  output    String?
+  duration  Int?
+  ranAt     DateTime
+  createdAt DateTime @default(now())
+}

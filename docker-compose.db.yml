@@ -1,0 +1,14 @@
+services:
+  mc-db:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: mission_control
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - mc_pgdata:/var/lib/postgresql/data
+
+volumes:
+  mc_pgdata:

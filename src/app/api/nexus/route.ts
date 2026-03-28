@@ -1,5 +1,5 @@
-import { readFileSync } from 'fs'
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 export interface HandoffEntry {
   id: string
@@ -10,47 +10,29 @@ export interface HandoffEntry {
   sent: string
 }
 
-function parseInbox(): HandoffEntry[] {
-  try {
-    const content = readFileSync('/root/.openclaw/workspace/agents/shared/INBOX.md', 'utf-8')
-    const blocks = content.split(/\n---\n/)
-    const handoffs: HandoffEntry[] = []
-
-    for (const block of blocks) {
-      const idMatch = block.match(/##\s+\[([^\]]+)\]\s*(\w+)?/)
-      if (!idMatch) continue
-
-      const fromMatch = block.match(/^-\s*From:\s*(.+)$/m)
-      const toMatch = block.match(/^-\s*To:\s*(.+)$/m)
-      const summaryMatch = block.match(/^-\s*Summary:\s*(.+)$/m)
-      const sentMatch = block.match(/^-\s*Sent:\s*(.+)$/m)
-      const ackedMatch = block.match(/^-\s*Acked:\s*(.+)$/m)
-
-      const from = fromMatch?.[1]?.trim() ?? ''
-      const to = toMatch?.[1]?.trim() ?? ''
-
-      if (!from.includes('nexus') && !to.includes('nexus')) continue
-
-      const acked = ackedMatch?.[1]?.trim() ?? ''
-      const status = acked && acked !== '—' ? 'ACKED' : 'PENDING'
-
-      handoffs.push({
-        id: idMatch[1].trim(),
-        from,
-        to,
-        summary: summaryMatch?.[1]?.trim() ?? '',
-        status,
-        sent: sentMatch?.[1]?.trim() ?? '',
-      })
-    }
-
-    return handoffs.slice(-15)
-  } catch {
-    return []
-  }
-}
-
 export async function GET() {
-  const handoffs = parseInbox()
-  return NextResponse.json({ handoffs })
+  try {
+    const rows = await prisma.handoff.findMany({
+      where: {
+        OR: [
+          { fromAgent: { contains: 'nexus' } },
+          { toAgent: { contains: 'nexus' } },
+        ],
+      },
+      orderBy: { sentAt: 'asc' },
+      take: 15,
+    })
+    const handoffs: HandoffEntry[] = rows.map((h) => ({
+      id: h.handoffId,
+      from: h.fromAgent,
+      to: h.toAgent,
+      summary: h.summary,
+      status: h.status,
+      sent: h.sentAt.toISOString(),
+    }))
+    return NextResponse.json({ handoffs })
+  } catch (error) {
+    console.error('Nexus DB error:', error)
+    return NextResponse.json({ handoffs: [], error: String(error) }, { status: 500 })
+  }
 }
