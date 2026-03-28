@@ -11,6 +11,8 @@ import {
   Bolt,
   Search,
   TrendingUp,
+  Heart,
+  Settings,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -33,6 +35,11 @@ const navItems = [
   { href: '/automations', label: 'Automations', icon: Zap },
   { href: '/team', label: 'Team', icon: Users },
   { href: '/ruel', label: 'Ruel Panel', icon: TrendingUp },
+]
+
+const systemItems = [
+  { href: '#', label: 'Support', icon: Heart },
+  { href: '#', label: 'Settings', icon: Settings },
 ]
 
 // Agent roster with colors
@@ -199,6 +206,41 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+
+        {/* System section */}
+        <SidebarGroup className="mt-2">
+          {!collapsed && (
+            <SidebarGroupLabel
+              className="text-xs uppercase tracking-widest px-4 py-2 font-semibold"
+              style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}
+            >
+              System
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {systemItems.map((item) => {
+                const Icon = item.icon
+                return (
+                  <SidebarMenuItem key={item.href + item.label}>
+                    <SidebarMenuButton
+                      render={
+                        <a
+                          href={item.href}
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150"
+                          style={{ color: 'var(--mc-text-muted)' }}
+                        >
+                          <Icon className="w-4 h-4 flex-shrink-0" />
+                          {!collapsed && <span>{item.label}</span>}
+                        </a>
+                      }
+                    />
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter
