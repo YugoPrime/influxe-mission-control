@@ -15,6 +15,9 @@ import {
   Settings,
   Activity,
   Lightbulb,
+  Briefcase,
+  Megaphone,
+  Brain,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -39,6 +42,9 @@ const navItems = [
   { href: '/ruel', label: 'Ruel Panel', icon: TrendingUp },
   { href: '/amalia', label: 'Amalia', icon: Heart },
   { href: '/ideas', label: 'Ideas Pipeline', icon: Lightbulb },
+  { href: '/nexus', label: 'Nexus', icon: Briefcase },
+  { href: '/nova', label: 'Nova', icon: Megaphone },
+  { href: '/mastermind', label: 'Mastermind', icon: Brain },
 ]
 
 const systemItems = [
