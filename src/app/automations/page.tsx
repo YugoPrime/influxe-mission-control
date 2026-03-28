@@ -128,8 +128,8 @@ export default function AutomationsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Automations</h1>
-          <p className="text-slate-400 text-sm mt-1">Scheduled cron jobs across all agents</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--mc-text-primary)' }}>Automations</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--mc-text-muted)' }}>Scheduled cron jobs across all agents</p>
         </div>
         <Badge className="bg-purple-900 text-purple-200 text-sm px-3 py-1">
           <Zap className="w-3 h-3 mr-1 inline" />
@@ -137,9 +137,9 @@ export default function AutomationsPage() {
         </Badge>
       </div>
 
-      <Card className="bg-slate-900 border-slate-800">
+      <Card className="mc-card">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm text-slate-400 font-medium">Cron Jobs</CardTitle>
+          <CardTitle className="text-sm font-medium" style={{ color: 'var(--mc-text-muted)' }}>Cron Jobs</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (

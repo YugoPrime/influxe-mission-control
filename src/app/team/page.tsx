@@ -71,7 +71,7 @@ function AgentCard({
 }
 
 function ConnectorLine() {
-  return <div className="w-px h-8 bg-slate-700 mx-auto" />
+  return <div className="w-px h-8 mx-auto" style={{ background: 'var(--mc-card-border)' }} />
 }
 
 function HorizontalConnector({ count }: { count: number }) {
@@ -100,7 +100,7 @@ export default function TeamPage() {
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center h-64">
-        <div className="text-slate-500">Loading team...</div>
+        <div className="" style={{ color: 'var(--mc-text-muted)' }}>Loading team...</div>
       </div>
     )
   }
@@ -112,8 +112,8 @@ export default function TeamPage() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Team</h1>
-        <p className="text-slate-400 text-sm mt-1">Agent org chart — Influxe ecosystem</p>
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--mc-text-primary)' }}>Team</h1>
+        <p className="text-sm mt-1" style={{ color: 'var(--mc-text-muted)' }}>Agent org chart — Influxe ecosystem</p>
       </div>
 
       {/* Org Chart */}
@@ -136,18 +136,18 @@ export default function TeamPage() {
         {/* Horizontal bar for C-suite */}
         <div className="relative flex justify-center w-full max-w-5xl">
           {/* Horizontal connecting line */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-slate-700" style={{ width: `${Math.min(csuite.length * 220, 1000)}px` }} />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px" style={{ background: 'var(--mc-card-border)', width: `${Math.min(csuite.length * 220, 1000)}px` }} />
           {/* Vertical drops */}
           <div className="flex gap-4 lg:gap-6 flex-wrap justify-center pt-0">
             {csuite.map(agent => (
               <div key={agent.id} className="flex flex-col items-center">
-                <div className="w-px h-8 bg-slate-700" />
+                <div className="w-px h-8" style={{ background: 'var(--mc-card-border)' }} />
                 <AgentCard agent={agent} size="md" />
                 
                 {/* Sub-agents */}
                 {SUB_AGENTS[agent.id] && (
                   <div className="flex flex-col items-center mt-0">
-                    <div className="w-px h-6 bg-slate-700" />
+                    <div className="w-px h-6" style={{ background: 'var(--mc-card-border)' }} />
                     {SUB_AGENTS[agent.id].map(sub => (
                       <div key={sub.id} className="flex flex-col items-center">
                         <AgentCard 
