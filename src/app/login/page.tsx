@@ -2,6 +2,7 @@
 
 import { signIn } from 'next-auth/react'
 import { useState } from 'react'
+import { Zap } from 'lucide-react'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -43,11 +44,13 @@ export default function LoginPage() {
       <div
         className="relative w-full max-w-sm mx-4 rounded-2xl p-8 space-y-6 text-center"
         style={{
-          background: 'var(--mc-card)',
+          background: 'rgba(255,255,255,0.03)',
           border: '1px solid var(--mc-card-border)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
           boxShadow: `
-            var(--mc-card-glow),
-            0 0 40px rgba(139,92,246,0.08),
+            inset 0 1px 0 rgba(255,255,255,0.08),
+            0 0 40px rgba(99,102,241,0.08),
             0 0 80px rgba(59,130,246,0.05)
           `,
         }}
@@ -61,7 +64,7 @@ export default function LoginPage() {
               boxShadow: '0 0 30px rgba(139,92,246,0.4), 0 0 60px rgba(59,130,246,0.2)',
             }}
           >
-            <span className="text-white font-bold text-2xl">⚡</span>
+            <Zap className="w-7 h-7 text-white" />
           </div>
         </div>
 
