@@ -189,25 +189,16 @@ export function AppSidebar() {
               Agents
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              <div className="px-3 space-y-1">
+              <div className="px-3 space-y-0.5">
                 {agents.map((agent) => (
                   <div
                     key={agent.id}
                     className="flex items-center gap-2.5 px-2 py-1.5 rounded-md transition-colors cursor-default"
-                    style={{ color: 'var(--mc-text-muted)' }}
                   >
-                    {/* Colored dot */}
-                    <span
-                      className="w-2 h-2 rounded-full flex-shrink-0"
-                      style={{
-                        background: agent.color,
-                        boxShadow: `0 0 6px ${agent.color}80`,
-                      }}
-                    />
-                    <span className="text-xs font-medium" style={{ color: 'var(--mc-text-primary)' }}>
+                    <span className="text-xs font-medium flex-1" style={{ color: 'var(--mc-text-primary)' }}>
                       {agent.label}
                     </span>
-                    <span className="ml-auto text-xs" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
+                    <span className="text-xs" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
                       {agent.role}
                     </span>
                   </div>

@@ -49,7 +49,7 @@ function AgentCard({
   }
 
   return (
-    <Card className={`bg-slate-900 border ${colors.border} ${sizeClasses[size]} w-full max-w-[200px]`}>
+    <Card className={`mc-card ${sizeClasses[size]} w-full max-w-[200px]`}>
       <CardContent className="p-0 flex flex-col items-center gap-2 text-center">
         <div className={`w-10 h-10 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center`}>
           {isOwner ? (
@@ -110,7 +110,7 @@ export default function TeamPage() {
   const csuite = CSUITE.map(id => agents.find(a => a.id === id)).filter(Boolean) as Agent[]
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold" style={{ color: 'var(--mc-text-primary)' }}>Team</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--mc-text-muted)' }}>Agent org chart — Influxe ecosystem</p>

@@ -142,7 +142,7 @@ export default async function DashboardPage() {
     : '+0%'
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
 
       {/* Page Header */}
       <div className="flex items-center justify-between mb-6">
@@ -176,7 +176,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Row 1 — 3 Stat Cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
 
         {/* Total Tasks */}
         <div className="mc-card p-5">
@@ -249,10 +249,10 @@ export default async function DashboardPage() {
       </div>
 
       {/* Row 2 — Backlog Overview + Agent Performance */}
-      <div className="grid grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-6">
 
         {/* Backlog Overview — col-span-3 */}
-        <div className="col-span-3 mc-card p-5">
+        <div className="lg:col-span-3 mc-card p-5">
           <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
             Backlog Overview
           </p>
@@ -284,7 +284,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Agent Performance — col-span-2 */}
-        <div className="col-span-2 mc-card p-5">
+        <div className="lg:col-span-2 mc-card p-5">
           <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--mc-text-muted)', fontSize: '10px' }}>
             Agent Performance
           </p>
@@ -311,7 +311,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Row 3 — Activity Feed + Cron Runs */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* Activity Feed */}
         <div className="mc-card p-5">

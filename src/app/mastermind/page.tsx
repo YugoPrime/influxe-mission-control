@@ -89,7 +89,6 @@ function ResearchCard({ item, glow }: { item: ResearchItem; glow?: boolean }) {
       style={{
         background: 'var(--mc-card)',
         border: `1px solid ${glow ? 'rgba(249,115,22,0.3)' : 'var(--mc-card-border)'}`,
-        boxShadow: glow ? '0 0 12px rgba(249,115,22,0.15)' : undefined,
       }}
     >
       <div className="flex items-start justify-between gap-3 mb-2">
@@ -133,7 +132,7 @@ export default async function MastermindPage() {
   const { research, scoredIdeas, recentLog } = await getMastermindData()
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
 
       {/* Page heading */}
       <div className="flex items-center gap-3">
@@ -142,7 +141,6 @@ export default async function MastermindPage() {
           style={{
             background: `${MM_COLOR}1e`,
             border: `1px solid ${MM_COLOR}40`,
-            boxShadow: `0 0 20px ${MM_COLOR}10`,
           }}
         >
           <Brain className="w-[18px] h-[18px]" style={{ color: MM_COLOR }} />
@@ -216,7 +214,6 @@ export default async function MastermindPage() {
                   className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
                   style={{
                     background: MM_COLOR,
-                    boxShadow: `0 0 6px ${MM_COLOR}80`,
                   }}
                 />
                 <p

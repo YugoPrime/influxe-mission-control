@@ -190,7 +190,7 @@ export default async function SystemHealthPage() {
   })
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
 
       {/* Page heading */}
       <div className="flex items-end justify-between">
@@ -325,7 +325,6 @@ export default async function SystemHealthPage() {
                     style={{
                       width: `${Math.min(pct, 100)}%`,
                       background: color,
-                      boxShadow: `0 0 8px ${color}60`,
                     }}
                   />
                 </div>

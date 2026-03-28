@@ -93,7 +93,7 @@ export default async function AmaliaPage() {
   const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
 
       {/* Page heading */}
       <div className="flex items-center gap-3">
@@ -253,7 +253,6 @@ export default async function AmaliaPage() {
                   className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
                   style={{
                     background: '#14b8a6',
-                    boxShadow: '0 0 6px rgba(20,184,166,0.5)',
                   }}
                 />
                 <p

@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Inter, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { BreadcrumbNav } from '@/components/breadcrumb-nav'
 import { Bell } from 'lucide-react'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 })
 
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+        className={`${inter.variable} ${geistMono.variable} antialiased min-h-screen`}
         style={{ background: 'var(--mc-bg)', color: 'var(--mc-text-primary)' }}
       >
         <ThemeProvider
@@ -58,12 +59,7 @@ export default function RootLayout({
                   />
                   {/* Breadcrumb */}
                   <div className="flex items-center gap-2 flex-1">
-                    <span
-                      className="text-sm font-medium tracking-tight hidden sm:block"
-                      style={{ color: 'var(--mc-text-muted)' }}
-                    >
-                      Dashboard
-                    </span>
+                    <BreadcrumbNav />
                   </div>
 
                   {/* Right side */}

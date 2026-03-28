@@ -120,8 +120,7 @@ function SessionCard({
       className="flex-1 p-4 rounded-xl"
       style={{
         background: 'var(--mc-card)',
-        border: `1px solid ${isOpen ? '#f59e0b40' : 'var(--mc-card-border)'}`,
-        boxShadow: isOpen ? '0 0 16px rgba(245,158,11,0.06)' : 'none',
+        border: `1px solid ${isOpen ? 'rgba(245,158,11,0.3)' : 'var(--mc-card-border)'}`,
       }}
     >
       <div className="flex items-start justify-between mb-2">
@@ -174,7 +173,7 @@ export default async function RuelPage() {
   const goldPrice = gold.price ? `$${Number(gold.price).toFixed(2)}` : '—'
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
 
       {/* Page heading */}
       <div className="flex items-end justify-between">
@@ -184,7 +183,6 @@ export default async function RuelPage() {
             style={{
               background: 'rgba(245,158,11,0.12)',
               border: '1px solid rgba(245,158,11,0.25)',
-              boxShadow: '0 0 20px rgba(245,158,11,0.08)',
             }}
           >
             <TrendingUp className="w-4.5 h-4.5 text-yellow-400" style={{ width: 18, height: 18 }} />
@@ -236,7 +234,7 @@ export default async function RuelPage() {
         {/* XAU/USD */}
         <div
           className="mc-card flex items-center gap-3 p-4"
-          style={{ boxShadow: 'var(--mc-card-glow), inset 0 1px 0 rgba(245,158,11,0.06)' }}
+          style={{}}
         >
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -260,7 +258,7 @@ export default async function RuelPage() {
         {/* Today P&L */}
         <div
           className="mc-card flex items-center gap-3 p-4"
-          style={{ boxShadow: 'var(--mc-card-glow)' }}
+          style={{}}
         >
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -287,7 +285,7 @@ export default async function RuelPage() {
         {/* Win rate */}
         <div
           className="mc-card flex items-center gap-3 p-4"
-          style={{ boxShadow: 'var(--mc-card-glow)' }}
+          style={{}}
         >
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -314,7 +312,7 @@ export default async function RuelPage() {
         {/* Open positions */}
         <div
           className="mc-card flex items-center gap-3 p-4"
-          style={{ boxShadow: 'var(--mc-card-glow)' }}
+          style={{}}
         >
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -486,7 +484,6 @@ export default async function RuelPage() {
                     className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
                     style={{
                       background: '#f59e0b',
-                      boxShadow: '0 0 6px rgba(245,158,11,0.5)',
                     }}
                   />
                   <div className="flex-1 min-w-0">

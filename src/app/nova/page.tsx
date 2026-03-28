@@ -80,7 +80,7 @@ export default async function NovaPage() {
   ]
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
 
       {/* Page heading */}
       <div className="flex items-center gap-3">
@@ -89,7 +89,6 @@ export default async function NovaPage() {
           style={{
             background: `${NOVA_COLOR}1e`,
             border: `1px solid ${NOVA_COLOR}40`,
-            boxShadow: `0 0 20px ${NOVA_COLOR}10`,
           }}
         >
           <Megaphone className="w-[18px] h-[18px]" style={{ color: NOVA_COLOR }} />
@@ -196,7 +195,6 @@ export default async function NovaPage() {
                     className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
                     style={{
                       background: NOVA_COLOR,
-                      boxShadow: `0 0 6px ${NOVA_COLOR}80`,
                     }}
                   />
                   <p

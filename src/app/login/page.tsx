@@ -14,45 +14,16 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center"
       style={{ background: 'var(--mc-bg)' }}
     >
-      {/* Atmospheric background glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `
-            radial-gradient(ellipse 60% 50% at 50% -10%, rgba(139,92,246,0.15) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 30% at 80% 80%, rgba(59,130,246,0.08) 0%, transparent 50%)
-          `,
-        }}
-      />
-
-      {/* Subtle grid overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-30"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      />
-
       {/* Login card */}
       <div
-        className="relative w-full max-w-sm mx-4 rounded-2xl p-8 space-y-6 text-center"
+        className="w-full max-w-sm mx-4 rounded-2xl p-8 space-y-6 text-center"
         style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'var(--mc-card)',
           border: '1px solid var(--mc-card-border)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: `
-            inset 0 1px 0 rgba(255,255,255,0.08),
-            0 0 40px rgba(99,102,241,0.08),
-            0 0 80px rgba(59,130,246,0.05)
-          `,
+          boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
         }}
       >
         {/* Logo */}
@@ -60,8 +31,7 @@ export default function LoginPage() {
           <div
             className="w-14 h-14 rounded-xl flex items-center justify-center"
             style={{
-              background: 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)',
-              boxShadow: '0 0 30px rgba(139,92,246,0.4), 0 0 60px rgba(59,130,246,0.2)',
+              background: 'linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)',
             }}
           >
             <Zap className="w-7 h-7 text-white" />
@@ -98,7 +68,8 @@ export default function LoginPage() {
           style={{
             background: '#ffffff',
             color: '#1a1a1a',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+            border: '1px solid #e5e5e5',
           }}
         >
           <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">

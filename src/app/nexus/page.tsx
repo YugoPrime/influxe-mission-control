@@ -127,7 +127,7 @@ export default async function NexusPage() {
   const { activeProjects, clientTasks, handoffs } = await getNexusData()
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
 
       {/* Page heading */}
       <div className="flex items-center gap-3">
@@ -136,7 +136,6 @@ export default async function NexusPage() {
           style={{
             background: `${NEXUS_COLOR}1e`,
             border: `1px solid ${NEXUS_COLOR}40`,
-            boxShadow: `0 0 20px ${NEXUS_COLOR}10`,
           }}
         >
           <Briefcase className="w-[18px] h-[18px]" style={{ color: NEXUS_COLOR }} />
