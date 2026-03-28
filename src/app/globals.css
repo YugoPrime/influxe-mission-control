@@ -135,10 +135,23 @@
   --sidebar-border: rgba(99,179,237,0.1);
   --sidebar-ring: #3b82f6;
 
+  /* New design tokens */
+  --bg: #0a0d14;
+  --bg-glow: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 70%);
+  --card: rgba(255,255,255,0.04);
+  --card-border: rgba(255,255,255,0.08);
+  --card-hover: rgba(255,255,255,0.06);
+  --text: #f1f5f9;
+  --muted: #64748b;
+  --accent: #6366f1;
+  --accent-glow: rgba(99,102,241,0.2);
+  --positive: #10b981;
+  --negative: #f43f5e;
+
   /* Mission Control custom vars */
-  --mc-bg: #050a14;
-  --mc-card: #0d1526;
-  --mc-card-border: rgba(99,179,237,0.15);
+  --mc-bg: #0a0d14;
+  --mc-card: rgba(255,255,255,0.04);
+  --mc-card-border: rgba(255,255,255,0.08);
   --mc-card-glow: 0 0 20px rgba(59,130,246,0.05), 0 1px 3px rgba(0,0,0,0.4);
   --mc-text-primary: #e2e8f0;
   --mc-text-muted: #64748b;
@@ -156,6 +169,7 @@
   body {
     @apply bg-background text-foreground;
     background-color: var(--mc-bg);
+    background-image: var(--bg-glow, none);
     color: var(--mc-text-primary);
   }
   html {
@@ -218,8 +232,8 @@
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(59,130,246,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59,130,246,0.015) 1px, transparent 1px);
+    linear-gradient(rgba(99,102,241,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.015) 1px, transparent 1px);
   background-size: 40px 40px;
   z-index: 0;
 }
