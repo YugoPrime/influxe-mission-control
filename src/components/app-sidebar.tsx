@@ -48,6 +48,7 @@ const navItems = [
   { href: '/nova', label: 'Nova', icon: Megaphone },
   { href: '/mastermind', label: 'Mastermind', icon: Brain },
   { href: '/jarvis', label: 'Jarvis', icon: Server },
+  { href: '/intelligence', label: 'Intelligence', icon: Brain },
 ]
 
 const systemItems = [
